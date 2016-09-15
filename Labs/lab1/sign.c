@@ -5,7 +5,7 @@
 // INSTRUCTOR: Michael Zapp
 // ASSIGNMENT: Lab 1, QUESTION: exercise 2
 // 
-// REMARKS: sign each word from std input
+// REMARKS: sign each word from std input with a 'sorted' version of the word
 //
 //-----------------------------------------
 

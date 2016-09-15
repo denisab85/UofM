@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 //-----------------------------------------
 // NAME: Denis Abakumov
 // STUDENT NUMBER: 7823110
@@ -7,9 +5,11 @@
 // INSTRUCTOR: Michael Zapp
 // ASSIGNMENT: Lab 1, QUESTION: exercise 1
 //
-// REMARKS: print all equal members of a sorted list on a single line
+// REMARKS: Hello, World!
 //
 //-----------------------------------------
+
+#include <stdio.h>
 
 int main()
 {
