@@ -32,7 +32,7 @@ int charcat (char *string, char ch)
     return 0;
 }
 
-char *longestWord(char *string)
+int *longestWord(char *string, char *result)
 {
     int pos = 0;
     char longest[MAXLEN] = "";
@@ -74,14 +74,15 @@ char *longestWord(char *string)
         pos++;
     }
     
-    return longest;
+    strcpy (result, longest);
+    return 0;
 }
 
 
 void testLongestWord(char *line, char *expected)
 {
     char result[MAXLEN] = "";
-    strcpy(result, longestWord(line));
+    longestWord(line, result);
     
     if (0 == strcmp(result, expected))
     {
@@ -92,7 +93,6 @@ void testLongestWord(char *line, char *expected)
         printf("FAILED: '%s' instead of '%s' from '%s'\n", result, expected, line);
         testsFailed++;
     }
-    
     testsExecuted++;
 }
 
