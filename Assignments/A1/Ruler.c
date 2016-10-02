@@ -53,7 +53,7 @@ double log2(double val)
 }
 
 
-int printRuler(long length)
+int printRuler(int length)
 {
     assert(length > 0);
     
@@ -85,8 +85,10 @@ int printRuler(long length)
 int isNum(const char *string) {
     size_t length = strlen (string);
     int i = 0;
-    for (i=0; i < length; i++)
-        if ( (i > 0) && (! isdigit(string[i])) )
+    if ( (string[0] != '-') && (string[0] != '+') && (! isdigit(string[0])) )
+        return 0;
+    for (i=1; i < length; i++)
+        if (! isdigit(string[i]))
             return 0;
     return 1;
 }
@@ -95,7 +97,7 @@ int isNum(const char *string) {
 int main(int argc, const char * argv[])
 {
     char done = 0;
-    long length;
+    int length;
     char inputLine[MAXLEN] = "";
     
     do
