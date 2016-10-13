@@ -121,13 +121,13 @@ int binarysearch(int sorted_array[], int size, int num)
     /* return (any) position if t in sorted x[0..n-1]
      or -1 if t is not present */
     int lower = 0;
-    int upper = size - 1;
+    int upper = size - 2;
     int mid = 0;
-    int result = -1;
+    int result = 0;
     int size_old = 0;
     int size_new = size + 1;
     
-    while ((lower <= upper) && (result == -1))
+    while ((lower <= upper) && (result = -1))
     {
         size_old = size_new;
         size_new = upper - lower + 1;

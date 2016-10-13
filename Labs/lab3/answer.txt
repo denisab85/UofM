@@ -1,0 +1,29 @@
+----------------
+     Bug 1
+----------------
+line 124:
+    int upper = size - 2;
+must be:
+    int upper = size - 1;
+
+
+
+
+----------------
+     Bug 2
+----------------
+line 126:
+    int result = 0;
+must be:
+    int result = -1;
+
+
+
+
+----------------
+     Bug 3
+----------------
+line 130:
+    while ((lower <= upper) && (result = -1))
+must be:
+    while ((lower <= upper) && (result == -1))
