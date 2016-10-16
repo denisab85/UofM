@@ -12,3 +12,27 @@ Assignments/A1/biggest/
 Assignments/A1/ruler/
 
 Labs/lab3/binarysearch/
+
+*.pbxproj
+
+*.pbxproj
+
+*.pbxproj
+
+Assignments/A2/life/life.xcodeproj/project.pbxproj
+
+*.plist
+
+*.xcscheme
+
+*.xcbkptlist
+
+*.xcexplist
+
+*.xcuserstate
+
+*.xcworkspacedata
+
+*.out
+
+Assignments/A2/twodarray.pdf
