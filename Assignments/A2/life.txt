@@ -1,0 +1,93 @@
+*Case #1
+10 20
+                    
+                    
+                    
+       X            
+        X           
+      XXX           
+                    
+                    
+                    
+                    
+*Case #2: R-Pentomino
+7 7
+       
+       
+   XX  
+  XX   
+   X   
+       
+       
+*Case #3: Trans-boat and dock getting blown up by a lightweight spaceship
+8 33
+    X                        X  X
+   X X                      X    
+    XX                      X   X
+                            XXXX 
+    XXXX                         
+   X    X                        
+   XX  XX                        
+                                 
+*Case #4: Glider Gun
+20 36
+                        X           
+                      X X           
+            XX      XX            XX
+           X   X    XX            XX
+XX        X     X   XX              
+XX        X   X XX    X X           
+          X     X       X           
+           X   X                    
+            XX                      
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+*Case #5: Block-laying switch engine
+39 50
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                            X                     
+           XXX        X     X                     
+          X   X      X       X                    
+           XX         XXXX  XX                    
+             XX XX         XXX                    
+               XX           X X                   
+                             X       XX           
+                             X       XX           
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                 XX                               
+                 XX                               
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                         XX                       
+                         XX                       
+                                                  
