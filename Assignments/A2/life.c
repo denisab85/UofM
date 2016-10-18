@@ -5,7 +5,7 @@
 
 const int MAX_SIZE = 64;
 const int MAX_LINE = 80;
-const int MAX_GEN  = 251;
+const int MAX_GEN  = 250;
 
 
 enum RESULT_code
@@ -82,14 +82,15 @@ int outputGen (const structField *universe, const int genNum)
 }
 
 
-int initGame (structGame *game, const enumState cells[MAX_SIZE*MAX_SIZE],
+int initGame (structGame *game, const char gameName[MAX_LINE], const enumState cells[MAX_SIZE*MAX_SIZE],
               const int size_x, const int size_y)
 {
     int result = RESULT_ERR;
     int x = 0;
     int y = 0;
     
-    printf ("%s", game->name);
+    strcpy (game->name, gameName);
+    printf ("%s\n", game->name);
     
     game->universe.size_x = size_x;
     game->universe.size_y = size_y;
@@ -221,38 +222,48 @@ int playGame (structGame *game)
     int outFirst = 0;
     int outLast = 0;
     
-    structField generations[MAX_GEN];
+    structField generations[MAX_GEN+1];
     
     outputGen (&game->universe, 0);
     generations[0] = game->universe;
     
-    while ( (genNum < MAX_GEN-1) && (-1 == cycle) )
+    while ( (genNum < MAX_GEN) && (-1 == cycle) )
     {
         genNum++;
         nextGen (generations, genNum);
-        i=0;
-        while ( (i < genNum) && (-1 == cycle) )
+        i=-1;
+        while ( (i < genNum-1) && (-1 == cycle) )
         {
+            i++;
             if (filedCmp(&generations [genNum], &generations [i]) == 0)
             {
                 cycle = i;
             }
-            i++;
         }
     }
-    assert ( ((cycle >= 0) && (cycle < genNum)) || ((-1 == cycle) && (MAX_GEN == genNum)) );
+    assert ( ((cycle >= 0) && (cycle < genNum)) || ((cycle < 0) && (MAX_GEN == genNum)) );
     if ((cycle >= 0) && (cycle < genNum))
     {
         printf("Found a cycle between generation %d and generation %d\n", cycle, genNum);
     }
-    if (genNum > 10)
-        outFirst = genNum - 9;
-    else
-        outFirst = 0;
-    outLast = genNum;
-    for (i = outFirst; i <= outLast; i++)
+    else if ( (cycle < 0) && (MAX_GEN != genNum) )
     {
-        outputGen (&generations[i], i);
+        fprintf (stderr, "Error searching cycle.\n");
+        result = RESULT_ERR;
+    }
+    
+#ifdef DEBUG
+    outFirst = 1;
+#else
+    outFirst = (genNum > 10?genNum - 9:11);
+#endif
+    outLast = genNum;
+    if (RESULT_OK == result)
+    {
+        for (i = outFirst; i <= outLast; i++)
+        {
+            outputGen (&generations[i], i);
+        }
     }
     return result;
 }
@@ -264,14 +275,15 @@ int main(int argc, const char * argv[])
     int result = RESULT_OK;
     FILE *input = NULL;
     char inputPath[1024];               // path to the input file
-    char line[MAX_LINE];                // a string for reading from an input file
+    char line[MAX_LINE] = "";           // a string for reading from an input file
     int lineNumFile = 1;                // number of current line in the input fie
-    int lineNumGame = 1;                // number of current input line in the game being processed
+    int lineNumGame = -1;               // number of current input line in the game being processed
     int size_x = 0;                     // width of the universe
     int size_y = 0;                     // height of the universe
-    enumState cells[MAX_SIZE*MAX_SIZE];     // initial universe
-    structGame game;
-    int i = 0;
+    enumState cells[MAX_SIZE*MAX_SIZE]; // initial universe
+    structGame game;                    // game object
+    char gameName[MAX_LINE] = "";
+    int x = 0;
     int END_OF_FILE = 0;
     
     //    while (EOF != scanf("%s", line))
@@ -303,59 +315,85 @@ int main(int argc, const char * argv[])
             END_OF_FILE = !(fgets (line, MAX_LINE, input));
             if ( (!END_OF_FILE) && (RESULT_OK == result) )
             {
-                if (line[0] == '*')       // load new game
+                if (line[strlen(line)-1] == '\n')
                 {
-                    lineNumGame = 1;
-                    strcpy (game.name, line);
-                    if (fgets (line, MAX_LINE, input) != NULL) // read dimensions of the universe
+                    line[strlen(line)-1] = '\0';
+                }
+                if (lineNumGame < 0)       // load new game
+                {
+                    //assert(line[0] == '*');
+                    if (line[0] != '*')
                     {
-                        lineNumFile++;
-                        sscanf (line, "%d%d", &size_y, &size_x);
-                        assert ( (size_x > 0) && (size_y > 0) && (size_x <= MAX_SIZE) && (size_y <= MAX_SIZE));  // validate dimensions
-                        if ( (size_x <= 0) || (size_y <= 0) )
-                        {
-                            printf("Error: incorrect dimensions of the universe: width=%d, height=%d [line %d]\n", size_x, size_y, lineNumFile);
-                            result = RESULT_ERR_UNIVERSE_DIMENSION;
-                        }
+                        fprintf (stderr, "Error: game header not found [line %d]. Expected: a string starting with '*'. Found: \"%s\".\nProgram will quit.\n\n", lineNumFile, line);
+                        result = RESULT_ERR_UNIVERSE_STRUCTURE;
                     }
                     else
                     {
-                        printf("Error: unexpected end of file [line %d]\n", lineNumFile);
-                        result = RESULT_ERR_UNEXPECTED_EOF;
+                        lineNumGame = 1;
+                        strcpy (gameName, line);
+                        if (fgets (line, MAX_LINE, input) != NULL) // read dimensions of the universe
+                        {
+                            lineNumFile++;
+                            size_x = 0;
+                            size_y = 0;
+                            sscanf (line, "%d%d", &size_y, &size_x);
+                            //                            assert ( (size_x > 0) && (size_y > 0) && (size_x <= MAX_SIZE) && (size_y <= MAX_SIZE));  // validate dimensions
+                            if ( (size_x <= 0) || (size_y <= 0) || (size_x > MAX_SIZE) || (size_y > MAX_SIZE))
+                            {
+                                fprintf (stderr, "Error: incorrect dimensions of the universe provided [line %d]. Expected: two space-separated integers from 0 to %d.\nProgram will quit.\n\n", lineNumFile, MAX_SIZE);
+                                result = RESULT_ERR_UNIVERSE_DIMENSION;
+                            }
+                        }
+                        else
+                        {
+                            fprintf(stderr, "Error: unexpected end of file [line %d].\nProgram will quit.\n\n", lineNumFile);
+                            result = RESULT_ERR_UNEXPECTED_EOF;
+                        }
                     }
                 }
                 else   // parse initial state of the universe
                 {
+                    //assert (strlen(line) >= size_x);
+                    if (strlen(line) < size_x)
+                    {
+                        fprintf (stderr, "Error: unexpected end of line [line %d:%d]. Expected: a string of min. %d charcters containing 'X' or ' '. Found: \"%s\" (%d characters).\nProgram will quit.\n\n", lineNumFile, x, size_x, line, (int)strlen (line));
+                        result = RESULT_ERR_UNIVERSE_STRUCTURE;
+                    }
                     assert ( (lineNumGame >= 0) && (lineNumGame <= size_y) );
                     if ( (lineNumGame >= 0) && (lineNumGame <= size_y) )
                     {
                         //printf("%s", line);
-                        i = 0;
-                        while ( (i < size_x) && (line[i]) && (RESULT_OK == result) )
+                        x = 0;
+                        while ( (x < size_x) && (line[x]) && (RESULT_OK == result) )
                         {                      // package 2d universe into 1d array of cells
-                            switch (line[i])
+                            switch (line[x])
                             {
                                 case ' ':
-                                    cells[(lineNumGame-1)*size_x + i] = STATE_DEAD;
+                                    cells[(lineNumGame-1)*size_x + x] = STATE_DEAD;
                                     break;
                                 case 'X':
-                                    cells[(lineNumGame-1)*size_x + i] = STATE_ALIVE;
+                                    cells[(lineNumGame-1)*size_x + x] = STATE_ALIVE;
                                     break;
                                 default:
-                                    printf("Error: invalid character [line %d]\n", lineNumFile);
+                                    fprintf(stderr, "Error: invalid character [line %d:%d]: \"%s\".\nProgram will quit.\n\n", lineNumFile, x, line);
                                     result = RESULT_ERR_UNIVERSE_STRUCTURE;
                             }
-                            i++;
+                            x++;
                         }
                         if ( (lineNumGame == size_y) && (RESULT_OK == result) ) // finished reading universe, start game
                         {
-                            initGame (&game, cells, size_x, size_y);
-                            playGame (&game);
+                            initGame (&game, gameName, cells, size_x, size_y);
+                            result = playGame (&game);
+                            if (result != RESULT_OK)
+                            {
+                                fprintf (stderr, "Error playing game \"%s\".\nProgram will quit.\n\n", game.name);
+                            }
+                            lineNumGame = -2;
                         }
                     }
                     else
                     {
-                        printf("Error: incorrect structure of the universe [line %d]\n", lineNumFile);
+                        fprintf (stderr, "Error: incorrect structure of the universe [line %d].\nProgram will quit.\n\n", lineNumFile);
                         result = RESULT_ERR_UNIVERSE_STRUCTURE;
                     }
                     lineNumGame++;
@@ -367,7 +405,7 @@ int main(int argc, const char * argv[])
                 assert (lineNumGame == size_y);
                 if ( (lineNumGame != size_y) )
                 {
-                    printf("Error: unexpected end of universe in input file: line %d\n", lineNumFile);
+                    fprintf (stderr, "Error: unexpected end of universe in input file [line %d].\nProgram will quit.\n\n", lineNumFile);
                     result = RESULT_ERR_UNEXPECTED_EOF;
                 }
             }
