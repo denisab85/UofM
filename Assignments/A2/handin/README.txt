@@ -41,4 +41,4 @@ The maximum number of geberations calculated = (1 initial + 250).
 
 Compilation:
 
-clang -o life ./life.c
+clang -DNDEBUG -o life ./life.c

@@ -1,6 +1,6 @@
 *Case #1
 10 20
-                    _
+                    
                     
                     
        X            
@@ -92,20 +92,3 @@ XX        X   X XX    X X
                          XX                       
                                                   
                                                   
-*Case #0 Test 0
-16 64
-                                                                
-                                                                
-                                                                
-                                                                
-                                   X                            
-                                     X                          
-                                  XX  XXX                       
-                                                                
-                                                                
-                                                                
-                                                                
-                                                                
-                                                                
-                                                                
-                                                                
