@@ -572,5 +572,9 @@ int main(int argc, const char * argv[])
         }
     }
     assert ( (result >= 0) && (result < RESULT_MAX_CODE) );
+    if (RESULT_OK == result)
+    {
+        printf ("Program finished normally.\n");
+    }
     return result;
 }
