@@ -11,6 +11,8 @@
 //-----------------------------------------
 
 
-To compile the table project, run make.
+To compile the table project, run:
+> make
+
 To start a test, run:
 > ./table ./sequences.txt
