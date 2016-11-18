@@ -27,16 +27,15 @@ void clearTable ()
 }
 
 
-node * createNode (int num)
+node * createNode (int item)
 {
     node * newNode = malloc ( sizeof (node) );
-    newNode->number = num;
+    newNode->number = item;
     newNode->prev = NULL;
     newNode->next = NULL;
     
     assert (newNode != NULL);
-    assert (newNode->number == num);
-    
+
     return newNode;
 }
 
@@ -83,8 +82,14 @@ Boolean insertItem (int item)
     if (result)
         size++;
     else
+    {
         free (newNode);
+        newNode = NULL;
+    }
 
+    assert ( ((result == true) && (newNode != NULL)) || (result == false && newNode == NULL) );
+    assert (_search_(item));
+    
     return result;
 }
 
@@ -107,7 +112,9 @@ Boolean removeItem (int item)
         result = true;
         size--;
     }
-
+    
+    assert (! _search_(item));
+    
     return result;
 }
 
@@ -125,7 +132,7 @@ static node * _search_ (const int number)
 
 
 // whether or not the given item is in the Table
-Boolean search (int item)
+Boolean search (const int item)
 {
     return (Boolean)_search_(item);
 }
