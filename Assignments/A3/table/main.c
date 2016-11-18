@@ -1,3 +1,16 @@
+//-----------------------------------------
+// NAME: Denis Abakumov
+// STUDENT NUMBER: 7823110
+// COURSE: COMP 2160, SECTION: A02
+// INSTRUCTOR: Michael Zapp
+// ASSIGNMENT: 3
+// QUESTION: 1
+//
+// REMARKS: Testing framework for the table project
+//
+//-----------------------------------------
+
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
