@@ -131,7 +131,8 @@ static node * _search_ (const int number)
 }
 
 
-// whether or not the given item is in the Table
+// a wrap-around function to return Boolean ))
+// detects whether or not the given item is in the Table
 Boolean search (const int item)
 {
     return (Boolean)_search_(item);
@@ -145,6 +146,9 @@ Boolean search (const int item)
 Boolean firstItem (int * const item)
 {
     Boolean result = false;
+
+    assert (top);
+    assert (item);
     
     if ( top )
     {
@@ -161,6 +165,10 @@ Boolean firstItem (int * const item)
 Boolean nextItem (int * const item)
 {
     Boolean result = false;
+    
+    assert (top);
+    assert (item);
+    assert (traverseNode);
     
     if ( traverseNode )
     {
