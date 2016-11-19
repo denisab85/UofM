@@ -1,12 +1,12 @@
 CC=clang
 CFLAGS=-I.
-DEPS = table.h
+DEPS = set.h, set.o
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-table: table.o main.o
-	$(CC) -o table table.o main.o -I.
+main: main.o
+	$(CC) -o main set.o main.o -I.
 
 clear:
-	rm -f ./*.o ./table
+	rm -f ./main.o ./main

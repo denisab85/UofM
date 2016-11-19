@@ -11,38 +11,58 @@
 //-----------------------------------------
 
 
-#ifndef set_h
-#define set_h
-
-typedef enum BOOL { false, true } Boolean;
-
-typedef struct SET Set;
+#include "set.h"
 
 
 // Returns true if there are currently *no* set objects in existence.
-Boolean validateMemUse();
+Boolean validateMemUse()
+{
+    Boolean result = false;
+    return result;
+}
 
 
 // Set constructor
-Set * newSet();
+Set * newSet()
+{
+    Set result;
+    return result;
+}
 
 
 //Set destructor
-Set * deleteSet(Set * theSet);
-
+Set * deleteSet(Set * theSet)
+{
+    Set result;
+    return result;
+}
 
 // Insert an item into a set, noting that sets do not contain duplicate items.
 // Returns true if the item was added to the set.
-Boolean insertItem(Set * const theSet, const int newItem);
+Boolean insertItem(Set * const theSet, const int newItem)
+{
+    Boolean result = false;
+    return result;
+}
 
 
 // Remove a given item, if it appears in the set.
 // Returns true if the item was removed from the set.
-Boolean removeItem(Set * const theSet, const int givenItem);
+Boolean removeItem(Set * const theSet, const int givenItem)
+{
+    Boolean result = false;
+    return result;
+}
+
 
 
 // Returns true if the two sets contain the same items.
-Boolean equals(Set const * const setA, Set const * const setB);
+Boolean equals(Set const * const setA, Set const * const setB)
+{
+    Boolean result = false;
+    return result;
+}
+
 
 
 // Return a new set that is the union of two sets (the two sets should be
@@ -56,7 +76,6 @@ Boolean equals(Set const * const setA, Set const * const setB);
 // the union of A and B is the set { 1, 2, 3, 4, 5, 6 }.
 Set * unionOf(Set const * const setA, Set const * const setB);
 
-
 // Return a new set that is the intersection of two sets (the two sets should be
 // unchanged by the operation).
 //
@@ -65,7 +84,6 @@ Set * unionOf(Set const * const setA, Set const * const setB);
 // Example: If A = { 1, 2, 3, 4 } and B = { 2, 3, 5 }, then
 // the intersection of A and B is the set { 2, 3 }.
 Set * intersectionOf(Set const * const setA, Set const * const setB);
-
 
 // Return a new set that is the difference of two sets (the two sets should be
 // unchanged by the operation).
@@ -76,5 +94,3 @@ Set * intersectionOf(Set const * const setA, Set const * const setB);
 // the difference A\B of A and B is the set { 1, 3 }.
 Set * differenceOf(Set const * const setA, Set const * const setB);
 
-
-#endif /* set_h */
