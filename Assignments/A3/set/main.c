@@ -15,6 +15,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <limits.h>
 #include "set.h"
 
 
@@ -89,17 +90,25 @@ void testDeletion (void * set)
 }
 
 
-Boolean runTest (int test, int operands[3][MAX_NUM])
+Boolean runTest (int test, int operands[3][MAX_NUM], Boolean memTestFail[3])
 {
     int result = -1;
-    void * set1 = newSet();
-    void * set2 = newSet();
-    void * expected = newSet();
+    void * set1 = NULL;
+    void * set2 = NULL;
+    void * expected = NULL;
     void * result_set = NULL;
+    
+    // test validateMemUse()
+    memTestFail[0] = (! validateMemUse());
+
+    // initializing our sets
+    set1 = newSet();
+    set2 = newSet();
+    expected = newSet();
     setFromArray(set1, operands[0]);
     setFromArray(set2, operands[1]);
     setFromArray(expected, operands[2]);
-    
+
     switch (test) {
         case 1:   // Comparison   [c]
             result = ( equals (set1, set2) == (Boolean) operands[2][1]);
@@ -121,10 +130,16 @@ Boolean runTest (int test, int operands[3][MAX_NUM])
             break;
     }
     
+    if (result >= 0)
+        memTestFail[1] = validateMemUse();
+    
     testDeletion(set1);
     testDeletion(set2);
     testDeletion(expected);
     testDeletion(result_set);
+    
+    // test memory usage
+    memTestFail[2] = (! validateMemUse());
     
     return result;
 }
@@ -141,6 +156,7 @@ int main(int argc, const char * argv[]) {
     char testDescr[MAX_STR] = "";
     int lineEmpty = 0;
     Boolean result;
+    Boolean memTestFail[3] = {false, false, false};
     
     if (argc > 1)
     {
@@ -148,12 +164,12 @@ int main(int argc, const char * argv[]) {
         input = fopen(inputPath, "r" );
         assert ( input != NULL );
         
-        // test validateMemUse()
-        if (! validateMemUse())
-            printf("Error: function validateMemUse() returned wrong results!");
-        
         if (input != NULL)
         {
+            // print output table header
+            printf (" ________________________________________________________________________________\n");
+            printf ("|TEST_TYPE | RESULT | MEM_PRE | MEM_IN  | MEM_POST|   TEST_DESCRIPTION\n");
+            printf ("|----------|--------|---------|---------|---------|------------------------------\n");
             while ( (readln (line, input) >= 0) && (test >= 0) && (lineEmpty < MAX_EMPTY_LINES) )
             {
                 if (strlen(line))
@@ -182,7 +198,7 @@ int main(int argc, const char * argv[]) {
                             break;
                     }
                     
-                    if ( (4 >= test > 0) )
+                    if ( (test <= 4) && (test > 0) )
                     {
                         strcpy(testDescr, line);
                         i = 0;
@@ -192,8 +208,11 @@ int main(int argc, const char * argv[]) {
                             i++;
                         }
                         
-                        result = runTest (test, operands);
-                        printf ( "%s: %s  - %s\n", testName, (result?"PASS":"FAIL"), testDescr );
+                        result = runTest (test, operands, memTestFail);
+                        printf ( "|%s |   %s    |    %s    |    %s    |    %s    | %s\n", testName, (result?"+":"-"),
+                                (memTestFail[0]?"-":"+"),
+                                (memTestFail[1]?"-":"+"),
+                                (memTestFail[2]?"-":"+"), testDescr );
                     }
                 }
                 else
@@ -202,9 +221,7 @@ int main(int argc, const char * argv[]) {
             
             fclose(input);
             
-            // test validateMemUse()
-            if (! validateMemUse())
-                printf("Error: function validateMemUse() returned wrong results!");
+        printf (" --------------------------------------------------------------------------------\n");
             
             printf ("\nAll tests finished.\n\n");
         }
