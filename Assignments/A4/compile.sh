@@ -19,6 +19,7 @@ function handin
 	cp -f ./GC/GC/* ./handin
 	cp ./Makefile ./handin
 	cp ./Readme.txt ./handin
+	echo "'handin' updated"
 }
 
 handin

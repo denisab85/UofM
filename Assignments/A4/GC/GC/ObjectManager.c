@@ -50,9 +50,17 @@ int objectCount = 0;
 char *freePtr = NULL;
 
 
+
 //-----------------------------------------------------------------------------
 // IMPLEMENTATION
 //-----------------------------------------------------------------------------
+
+// count memory cyrrently in use
+unsigned long memInUse()
+{
+    return freePtr - pool[active_pool];
+}
+
 
 index_item *createIndexItem (const int size)
 {
@@ -132,8 +140,14 @@ static unsigned long compact()
             }
             ind = ind->next;
         }
-        active_pool = !active_pool;   //toggle
+        active_pool = !active_pool;   //toggle pools
+        
+        printf("Memory state after garbage collection:\n");
+        printf("The number of objects that exist:   %d\n", objectCount);
+        printf("The current number of bytes in use: %lu\n", memInUse());
+        printf("The number of bytes collected:      %lu\n\n", memFreed);
     }
+
     return memFreed;
 }
 
@@ -148,7 +162,7 @@ Ref insertObject (const int size)
     
     if ( (active_pool == 0) || (active_pool == 1) )
     {
-        memAvailable = pool[active_pool] + MEMORY_SIZE - freePtr;
+        memAvailable = MEMORY_SIZE - memInUse();
         
         // if not enough memory, try to GC the pool and check again
         if ( (memAvailable < size) && (memAvailable + compact() < size) )
